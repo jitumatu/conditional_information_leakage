@@ -29,7 +29,7 @@ int main(){
 	int j, k, p, r, s, t, v, x, y, num;
 	
 	MAXthread = omp_get_max_threads(); 
-    printf("max threads (set): %d\n", MAXthread);
+	printf("max threads (set): %d\n", MAXthread);
 
 	/* we have to generate a random number larger than RAND_MAX*/
 	printf("RAND_MAX=%d", RAND_MAX);
@@ -93,7 +93,7 @@ int main(){
 	
 
 	/* get start_time */
-    clock_gettime(CLOCK_REALTIME, &startTime);
+	clock_gettime(CLOCK_REALTIME, &startTime);
 
 	#pragma omp parallel for private(s, t, r, v, Pr) reduction(+:beta[0:1<<m]) 
 	for (i=0; i< ( ( (long long int) 1) << n ); i++){
@@ -107,10 +107,9 @@ int main(){
 		}
 		beta[s] += Pr;
 	}
-
 	
-    /* get end_time */
-    clock_gettime(CLOCK_REALTIME, &endTime);
+	/* get end_time */
+	clock_gettime(CLOCK_REALTIME, &endTime);
 
 	for (i = 0; i < ( ( (long long int) 1) << m ) ; i++){
 		if (beta[i] != 0){
@@ -124,18 +123,17 @@ int main(){
 	
 	
 	/* print the elapsed time */
-    printf("elapsed time = ");
-    if (endTime.tv_nsec < startTime.tv_nsec) {
-      printf("%5ld.%09ld", endTime.tv_sec - startTime.tv_sec - 1,
-             endTime.tv_nsec + (long int)1.0e+9 - startTime.tv_nsec);
-    } else {
-      printf("%5ld.%09ld", endTime.tv_sec - startTime.tv_sec,
-             endTime.tv_nsec - startTime.tv_nsec);
-    }
-    printf("(sec)\n");
+	printf("elapsed time = ");
+	if (endTime.tv_nsec < startTime.tv_nsec) {
+		printf("%5ld.%09ld", endTime.tv_sec - startTime.tv_sec - 1,
+		       endTime.tv_nsec + (long int)1.0e+9 - startTime.tv_nsec);
+	} else {
+		printf("%5ld.%09ld", endTime.tv_sec - startTime.tv_sec,
+		       endTime.tv_nsec - startTime.tv_nsec);
+	}
+	printf("(sec)\n");
 	
 	free(beta);
 	free(beta_new);
-
 	return 0;
 }
