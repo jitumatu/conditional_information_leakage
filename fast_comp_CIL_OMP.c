@@ -30,8 +30,7 @@ int main(){
 	int x, y, j, k, p, num, r, a_tmp;
 	
 	MAXthread = omp_get_max_threads(); 
-
-    printf("max threads (set): %d\n", MAXthread);
+	printf("max threads (set): %d\n", MAXthread);
 
 	/* we generate a random number larger than RAND_MAX*/
 	printf("RAND_MAX=%d", RAND_MAX);
@@ -88,36 +87,35 @@ int main(){
 
 	beta = (double *) malloc(sizeof(double) * ( ( (long long int) 1)  << m)); 
 	beta_new = (double *) malloc(sizeof(double) * ( ( (long long int) 1) << m)); 
-	beta[0] = 1.0;
+	beta[0] = 1.0;	
 	for( i = 1; i < ( ( (long long int) 1) << m ); i++ ){
 		beta[i] = 0.0;
 	}
 	
 
 	/* get the start time */
-    clock_gettime(CLOCK_REALTIME, &startTime);
-
-		for (r = 0; r< n; r++){
-			printf("r=%d\n", r);
-			Phi0 = Phi[0][ z[r] ]; 
-			Phi1 = Phi[1][ z[r] ]; 
-			a_tmp = a[r];
-			#pragma omp parallel for num_threads(MAXthread)
-			for (i = 0; i< ( ( (long long int) 1 ) << m ); i++){
-				// printf("i=%d\n", i);
-				beta_new[i] = Phi0 * beta[ i ] 
-			    	        + Phi1 * beta[ i^a_tmp ] ; 
-				/* i ^ j is bitwise EXOR */
-			}
-			#pragma omp parallel for num_threads(MAXthread)
-			for (i = 0; i < ( ( (long long int) 1) << m ); i++){
-				beta[i] = beta_new[i];
-			//printf("beta[%d]=%f\n", i, beta[i]);
-			}
+	clock_gettime(CLOCK_REALTIME, &startTime);
+	for (r = 0; r< n; r++){
+		printf("r=%d\n", r);
+		Phi0 = Phi[0][ z[r] ]; 
+		Phi1 = Phi[1][ z[r] ]; 
+		a_tmp = a[r];
+		#pragma omp parallel for num_threads(MAXthread)
+		for (i = 0; i< ( ( (long long int) 1 ) << m ); i++){
+			// printf("i=%d\n", i);
+			beta_new[i] = Phi0 * beta[ i ] 
+		    	        + Phi1 * beta[ i^a_tmp ] ; 
+			/* i ^ j is bitwise EXOR */
 		}
+		#pragma omp parallel for num_threads(MAXthread)
+		for (i = 0; i < ( ( (long long int) 1) << m ); i++){
+			beta[i] = beta_new[i];
+		//printf("beta[%d]=%f\n", i, beta[i]);
+		}
+	}
 	
-    /* get the end time */
-    clock_gettime(CLOCK_REALTIME, &endTime);
+	/* get the end time */
+	clock_gettime(CLOCK_REALTIME, &endTime);
 
 	for (i = 0; i < ( ( (long long int) 1) << m ) ; i++){
 		if ( beta[i] != 0 ){
@@ -128,20 +126,18 @@ int main(){
 	H = H/log(2); /* the base of log is 2 */
 	printf("I(S^m;Z^n) = %f\n", m - H);
 	
-	
 	/* print the elapsed time */
-    printf("elapsed time = ");
-    if (endTime.tv_nsec < startTime.tv_nsec) {
-      printf("%5ld.%09ld", endTime.tv_sec - startTime.tv_sec - 1,
-             endTime.tv_nsec + (long int)1.0e+9 - startTime.tv_nsec);
-    } else {
-      printf("%5ld.%09ld", endTime.tv_sec - startTime.tv_sec,
-             endTime.tv_nsec - startTime.tv_nsec);
-    }
-    printf("(sec)\n");
+	printf("elapsed time = ");
+	if (endTime.tv_nsec < startTime.tv_nsec) {
+		printf("%5ld.%09ld", endTime.tv_sec - startTime.tv_sec - 1,
+		       endTime.tv_nsec + (long int)1.0e+9 - startTime.tv_nsec);
+	} else {
+		printf("%5ld.%09ld", endTime.tv_sec - startTime.tv_sec,
+		       endTime.tv_nsec - startTime.tv_nsec);
+	}
+	printf("(sec)\n");
 	
 	free(beta);
 	free(beta_new);
-
 	return 0;
 }
