@@ -38,8 +38,7 @@ int main(){
 	z = (int *) malloc( sizeof(int) * n_max);
 	
 	MAXthread = omp_get_max_threads(); 
-
-    printf("max threads (set): %d\n", MAXthread);
+	printf("max threads (set): %d\n", MAXthread);
 
 	/* we have to generate a random number larger than RAND_MAX*/
 	printf("RAND_MAX=%d", RAND_MAX);
